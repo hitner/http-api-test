@@ -5,6 +5,9 @@ import datasource from './test_data';
 import './App.css';
 import VConsole from 'vconsole';
 import Axios from 'axios';
+import lz from '@lizhife/lz-jssdk';
+
+
 
 const  vcon = new VConsole();
 vcon.setOption('maxLogNumber', 500);
@@ -21,9 +24,51 @@ class App extends Component {
     this.onApiInputChanged = this.onApiInputChanged.bind(this);
     this.onRunApi = this.onRunApi.bind(this);
     this.onRunAll = this.onRunAll.bind(this);
+
+    this.loginLizhi();
+
   }
   componentDidMount() {
+    
+  }
 
+  updateToken(ret) {
+    var {tc} = this.state;
+    Object.keys(tc.global_input).forEach(element=>{
+      if(tc.global_input[element] === '__TOKEN') {
+        tc.global_input[element] = ret;
+        this.setState({
+          tc:tc,
+        });
+      }
+    });
+  }
+  //---------------------------login handle -------------------------//
+  loginLizhi(){
+      lz.config({
+        debug:false,
+        url:'',//"//h5security.lizhi.fm/jsBridgeConfig/get",
+        apiList:[
+          'getToken',
+          'getAppInfo',
+        ],
+        eventList:[
+          'verifySignFinish',
+          'user:login',
+        ]
+      });
+    
+      lz.ready(()=>{
+        console.log('lz-jssdk ready now');
+        lz.getToken({needRefresh:false}
+          ).then((ret)=>{
+            console.log('lz jssdk:token:', ret);
+            if (ret.status === 'success'){
+              this.updateToken(ret.token);
+            }
+          });
+      });
+    
   }
 
   //---------------------------support function -----------------------//
@@ -97,7 +142,7 @@ class App extends Component {
       }
       newStatus[index] = {
         state:3,
-        describe:JSON.stringify(error.response.data),
+        describe:JSON.stringify(errorDict),
       };
       this.setState({
         status:newStatus,
@@ -137,19 +182,47 @@ class App extends Component {
     this.requestApi(api,index);
   }
 
+  //----------显示相关-------------
+  stat_status(list) {
+    var ret ={
+      totoal:0,
+      running:0,
+      success:0,
+      failed:0
+    };
+
+    ret.totoal = this.state.tc.interface.length;
+    list.forEach((element)=>{
+      if(element.state === 1) {
+        ret.running ++;
+      }
+      else if(element.state === 2){
+        ret.success ++;
+      }
+      else if(element.state === 3) {
+        ret.failed ++;
+      }
+    });
+    return ret;
+  }
 
 
   render() {
     const {tc} = this.state;
+    var statictis = this.stat_status(this.state.status);
+
+    
     return (
       <div className="App">
-       <h1>{tc.name}</h1> 
+       <div>{tc.name}</div> 
        <div className="meta-info">
        <div>环境:{this.state.origin}, origin:{this.currentOrigin()}</div>
        <GlobalInput global_input={tc.global_input}
                     onGlobalInputChanged={this.onGlobalInputChanged}
        />
        <button onClick={this.onRunAll}>全部运行</button>
+       <div>总共:{statictis.totoal},其中{statictis.running} running,
+       {statictis.success} success,{statictis.failed} failed</div>
        </div>
        <Interface interface ={tc.interface}
           onApiInputChanged={this.onApiInputChanged}

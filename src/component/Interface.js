@@ -51,7 +51,7 @@ class ApiDetail extends Component {
             />
             <div>
                 <button onClick={(e)=>this.props.onRunApi(this.props.index)}>运行</button>
-                <div>{state_string}</div>
+                <div className={state_string}>{state_string}</div>
             </div>
             <div>{describe}</div>
         </div>)

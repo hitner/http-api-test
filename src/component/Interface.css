@@ -4,3 +4,14 @@
     margin-top:10px;
 }
 
+.success {
+    color:green;
+}
+
+.failed {
+    color:red;
+}
+
+.running {
+    color:blue;
+}
