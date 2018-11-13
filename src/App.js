@@ -47,7 +47,7 @@ class App extends Component {
   loginLizhi(){
       lz.config({
         debug:false,
-        url:'',//"//h5security.lizhi.fm/jsBridgeConfig/get",
+        url:process.env.NODE_EVN === 'development'?'':"//h5security.lizhi.fm/jsBridgeConfig/get",
         apiList:[
           'getToken',
           'getAppInfo',
