@@ -182,6 +182,9 @@ class App extends Component {
     this.requestApi(api,index);
   }
 
+  onAddApi(){
+
+  }
   //----------显示相关-------------
   stat_status(list) {
     var ret ={
@@ -221,14 +224,17 @@ class App extends Component {
                     onGlobalInputChanged={this.onGlobalInputChanged}
        />
        <button onClick={this.onRunAll}>全部运行</button>
-       <div>总共:{statictis.totoal},其中{statictis.running} running,
-       {statictis.success} success,{statictis.failed} failed</div>
+       <div>总共:{statictis.totoal},其中
+       <span className="running">{statictis.running} running</span>,
+       <span className="success">{statictis.success} success</span>,
+       <span className="failed">{statictis.failed} failed</span></div>
        </div>
        <Interface interface ={tc.interface}
           onApiInputChanged={this.onApiInputChanged}
           onRunApi = {this.onRunApi}
           status ={this.state.status}
        />
+       <button onClick={this.onAddApi}>添加接口</button>
       </div>
     );
   }

@@ -49,10 +49,11 @@ class ApiDetail extends Component {
                 onApiInputChanged={this.props.onApiInputChanged} 
                 apiIndex={this.props.index}
             />
-            <div>
+            <div className='button-flex'>
                 <button onClick={(e)=>this.props.onRunApi(this.props.index)}>运行</button>
-                <div className={state_string}>{state_string}</div>
+                <button onClick={(e)=>this.props.onEditApi(this.props.index)}>Edit</button>
             </div>
+            <div className={state_string}>{state_string}</div>
             <div>{describe}</div>
         </div>)
     }
