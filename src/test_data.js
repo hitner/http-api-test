@@ -4,12 +4,11 @@ const datasource = `
     "name":"foo bar",
     "origin":{
         "pre":"https://liveamusecommpre.lizhi.fm",
-        "dock":"http://172.17.33.213:7102",
+        "dock":"http://192.168.10.237:8881",
         "prod":"https://liveamusecomm.lizhi.fm"
     },
     "global_input":{
-        "mount_id":"23412341234",                   
-        "token":"__TOKEN" 
+        "token":"" 
     },
     "interface":[{
             "name":"api_mount_list",
@@ -54,6 +53,43 @@ const datasource = `
             "input":{ 
             },
             "path":"/mount/getUserError",
+            "method": "GET",  
+            "application_json" : {
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_master_get_connect",
+            "input":{ 
+            },
+            "path":"/dropim/getConnectionAttribute",
+            "method": "GET",  
+            "application_json" : {
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_master_send_msg",
+            "input":{ 
+                "cmd":"0"
+            },
+            "path":"/dropim/webSend?session=\${token}",
+            "method": "POST",  
+            "application_json" : {
+                "cmd":"\${cmd}",
+                "describe":"hello world"
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_master_long_poll",
+            "input":{ 
+                "seq":"0"
+            },
+            "path":"/dropim/syncWebMessages?session=\${token}&seq=\${seq}",
             "method": "GET",  
             "application_json" : {
             },

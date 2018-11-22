@@ -5,6 +5,8 @@ import datasource from './test_data';
 import './App.css';
 import VConsole from 'vconsole';
 import Axios from 'axios';
+import * as Utility from './component/utility';
+
 import lz from '@lizhife/lz-jssdk';
 
 
@@ -24,7 +26,9 @@ class App extends Component {
     this.onApiInputChanged = this.onApiInputChanged.bind(this);
     this.onRunApi = this.onRunApi.bind(this);
     this.onRunAll = this.onRunAll.bind(this);
-
+    this.onEditApi = this.onEditApi.bind(this);
+    this.onAddApi = this.onAddApi.bind(this);
+    
     this.loginLizhi();
 
   }
@@ -94,16 +98,29 @@ class App extends Component {
     }
   }
 
-  wholeUrl(api) {
+  replaceVarInString(api, str) {
     var reg = /\$\{.+?\}/g;
     var retArray;
-    var path = api.path;
-    while((retArray = reg.exec(api.path)) !== null) {
+    var result = str;
+    while((retArray = reg.exec(str)) !== null) {
       var target = retArray[0].substring(2, retArray[0].length-1);
-      path = path.replace(retArray[0], this.varValue(api, target));
-    }
-    return this.currentOrigin() + path;
+      result = result.replace(retArray[0], this.varValue(api, target));
+    } 
+    return result
   }
+
+  wholeUrl(api) {
+    return this.currentOrigin() + this.replaceVarInString(api, api.path);
+  }
+
+  finalApplicationJson(api) {
+    var result = {}
+    Object.keys(api.application_json).forEach((key)=>{
+      result[key] = this.replaceVarInString(api, api.application_json[key])
+    });
+    return result;
+  }
+
 
   requestApi(api, index) {
     var {status} = this.state;
@@ -114,10 +131,12 @@ class App extends Component {
     this.setState({
       status:status,
     });
+
+    var final_app_json = this.finalApplicationJson(api);
     Axios({
       method:api.method,
       url:this.wholeUrl(api),
-
+      data:Utility.isEmptyObject(final_app_json)? null : final_app_json,
     }).then((response)=>{
       var RET = response.data;
       var selfAssert = eval(api.assert);
@@ -185,6 +204,9 @@ class App extends Component {
   onAddApi(){
 
   }
+  onEditApi() {
+
+  }
   //----------显示相关-------------
   stat_status(list) {
     var ret ={
@@ -232,6 +254,7 @@ class App extends Component {
        <Interface interface ={tc.interface}
           onApiInputChanged={this.onApiInputChanged}
           onRunApi = {this.onRunApi}
+          onEditApi = {this.onEditApi}
           status ={this.state.status}
        />
        <button onClick={this.onAddApi}>添加接口</button>

@@ -68,6 +68,7 @@ class Interface extends Component {
                 index={index} 
                 onApiInputChanged={this.props.onApiInputChanged}
                 onRunApi={this.props.onRunApi}
+                onEditApi={this.props.onEditApi}
                 status={this.props.status[index]}/>
                 )
         });

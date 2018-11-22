@@ -4,3 +4,6 @@ export function pathOnly(str) {
 }
 
 
+export function isEmptyObject(obj) {
+    return Object.keys(obj).lenght === 0 && obj.constructor === Object;
+}
