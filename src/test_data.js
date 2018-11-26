@@ -96,6 +96,44 @@ const datasource = `
             "headers":{
             },
             "assert":"RET.rcode === 0"
+        },{
+            "name":"api_slave_connect_to",
+            "input":{ 
+                
+            },
+            "path":"/dropim/connect?token=\${token}",
+            "method": "GET",  
+            "application_json" : {
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_slave_send_msg",
+            "input":{ 
+                "cmd":"0"
+            },
+            "path":"/dropim/clientSend?token=\${token}",
+            "method": "POST",  
+            "application_json" : {
+                "cmd":"\${cmd}",
+                "describe":"client"
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_slave_long_poll",
+            "input":{ 
+                "seq":"0"
+            },
+            "path":"/dropim/syncClientMessages?token=\${token}&seq=\${seq}",
+            "method": "GET",  
+            "application_json" : {
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
         }
     ],
 
@@ -109,3 +147,4 @@ const datasource = `
 `;
 
 export default datasource;
+

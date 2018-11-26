@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GlobalInput from './component/GlobalInput';
 import Interface from './component/Interface';
+import EditApiDialog from './component/EditApiDialog';
 import datasource from './test_data';
 import './App.css';
 import VConsole from 'vconsole';
@@ -21,6 +22,8 @@ class App extends Component {
       tc:JSON.parse(datasource),
       origin:"dock",
       status:[],//0 空闲，1正在执行， 2 成功， 3失败 state describe
+      apiDialogOpen:false, //修改、添加api对话框
+      apiDialogIndex:-1,   //-2,修改头部信息 -1新增api，其它对应要修改的api的序号
     };
     this.onGlobalInputChanged = this.onGlobalInputChanged.bind(this);
     this.onApiInputChanged = this.onApiInputChanged.bind(this);
@@ -202,10 +205,28 @@ class App extends Component {
   }
 
   onAddApi(){
-
+    this.setState({
+      apiDialogOpen:true,
+      apiDialogIndex:-1,
+    })
   }
-  onEditApi() {
+  onEditApi(index) {
+    this.setState({
+      apiDialogOpen:true,
+      apiDialogIndex:index,
+    })
+  }
 
+  onModifyHead = () => {
+    this.setState({
+      apiDialogIndex:-2,
+      apiDialogOpen:true,
+    })
+  }
+  handleApiDialogClose = () => {
+    this.setState({
+      apiDialogOpen:false,
+    })
   }
   //----------显示相关-------------
   stat_status(list) {
@@ -236,6 +257,19 @@ class App extends Component {
     const {tc} = this.state;
     var statictis = this.stat_status(this.state.status);
 
+    var dialogApi;
+    if (this.state.apiDialogOpen){ 
+      if (this.state.apiDialogIndex >= 0) {
+        dialogApi = tc.interface[this.state.apiDialogIndex];
+      }
+      else if (this.state.apiDialogIndex == -2) {
+        dialogApi = {
+          name:tc.name,
+          origin:tc.origin,
+          global_input:tc.global_input,
+        }
+      }
+    }
     
     return (
       <div className="App">
@@ -245,7 +279,11 @@ class App extends Component {
        <GlobalInput global_input={tc.global_input}
                     onGlobalInputChanged={this.onGlobalInputChanged}
        />
-       <button onClick={this.onRunAll}>全部运行</button>
+       <div className="button-flex">
+          <button onClick={this.onRunAll}>全部运行</button>
+          <button onClick={this.onModifyHead}>Edit</button>
+       </div>
+       
        <div>总共:{statictis.totoal},其中
        <span className="running">{statictis.running} running</span>,
        <span className="success">{statictis.success} success</span>,
@@ -258,6 +296,10 @@ class App extends Component {
           status ={this.state.status}
        />
        <button onClick={this.onAddApi}>添加接口</button>
+       <EditApiDialog open = {this.state.apiDialogOpen}
+        apiData = {dialogApi}
+        onClose={this.handleApiDialogClose}
+       />
       </div>
     );
   }

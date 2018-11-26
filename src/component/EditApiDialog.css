@@ -1,0 +1,14 @@
+.input-label {
+    display: inline-block;
+    width:120px;
+}
+
+.input-content {
+    width: 380px;
+}
+
+
+.delete-btn {
+    position: absolute !important;
+    left: 20px;
+}
