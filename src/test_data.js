@@ -4,30 +4,44 @@ const datasource = `
     "name":"foo bar",
     "origin":{
         "pre":"https://liveamusecommpre.lizhi.fm",
-        "dock":"http://192.168.10.237:8881",
+        "dock":"http://192.168.10.237:8800",
         "prod":"https://liveamusecomm.lizhi.fm"
     },
     "global_input":{
         "token":"" 
     },
     "interface":[{
-            "name":"api_mount_list",
+            "name":"api_get_set_list",
             "input":{ 
-
             },
-            "path":"/mount/getMountList",
+            "path":"/testsets",
             "method": "GET",  
             "application_json" : {
-
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+                    
+        },{
+            "name":"api_add_file",
+            "input":{ 
+                "content":""
+            },
+            "path":"/testsets",
+            "method": "POST",  
+            "application_json" : {
+                "name":"test",
+                "content":"\${content}"
             },
             "headers":{
             },
             "assert":"RET.rcode === 0" 
         },{
-            "name":"api_user_info",
+            "name":"api_get_set_content",
             "input":{ 
+                "index":0
             },
-            "path":"/mount/getUserInfo?token=\${token}",
+            "path":"/testsets/\${index}",
             "method": "GET",  
             "application_json" : {
             },
@@ -35,25 +49,74 @@ const datasource = `
             },
             "assert":"RET.rcode === 0"
         },{
-            "name":"api_buy_mount",
+            "name":"api_delete_set",
             "input":{ 
-                "productId":"",
-                "cmd":0,
-                "type":0
+                "index":0 
             },
-            "path":"/mount/buyMount?token=\${token}&productId=\${productId}&cmd=\${cmd}&type=\${type}",
-            "method": "GET",  
+            "path":"/testsets/\${index}",
+            "method": "DELETE",  
             "application_json" : {
             },
             "headers":{
             },
             "assert":"RET.rcode === 0" 
         },{
-            "name":"api_test_error",
+            "name":"api_patch_set",
             "input":{ 
+                "name":"new name",
+                "index":0
             },
-            "path":"/mount/getUserError",
-            "method": "GET",  
+            "path":"/testsets/\${index}",
+            "method": "PATCH",  
+            "application_json" : {
+                "name":"\${name}",
+                "describe":"哈哈哈哈哈哈"
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_post_interface",
+            "input":{ 
+                "name":"new name",
+                "index":0
+            },
+            "path":"/testsets/\${index}/interface",
+            "method": "POST",  
+            "application_json" : {
+                "name":"\${name}",
+                "describe":"哈哈哈哈哈哈",
+                "method":"GET"
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_put_interface",
+            "input":{ 
+                "from_put":"it is from put",
+                "index":0,
+                "inter":0
+            },
+            "path":"/testsets/\${index}/interface/\${inter}",
+            "method": "PUT",  
+            "application_json" : {
+                "name":"PUTkkkk",
+                "describe":"哈哈哈哈哈哈dd",
+                "method":"GET",
+                "content":"\${from_put}"
+            },
+            "headers":{
+            },
+            "assert":"RET.rcode === 0"
+        },{
+            "name":"api_delete_interface",
+            "input":{ 
+                "index":0,
+                "inter":0
+            },
+            "path":"/testsets/\${index}/interface/\${inter}",
+            "method": "DELETE",  
             "application_json" : {
             },
             "headers":{
@@ -147,4 +210,34 @@ const datasource = `
 `;
 
 export default datasource;
+
+
+export const main_list = `
+{
+    "sets":[
+        {
+            "name":"one",
+            "index":1,
+            "size":233,
+            "mtime":1523434343.1234
+
+        },{
+            "name":"two",
+            "index":11,
+            "size":233,
+            "mtime":1523434343.1234
+        },{ 
+            "name":"three",
+            "index":12,
+            "size":233,
+            "mtime":1523434343.1234
+        },{
+            "name":"four",
+            "index":13,
+            "size":233,
+            "mtime":1523434343.1234
+        }
+    ]
+}
+`;
 

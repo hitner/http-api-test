@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import GlobalInput from './component/GlobalInput';
 import Interface from './component/Interface';
 import EditApiDialog from './component/EditApiDialog';
-import datasource from './test_data';
+import datasource, {main_list} from './test_data';
 import './App.css';
 import VConsole from 'vconsole';
 import Axios from 'axios';
 import * as Utility from './component/utility';
-
+import {AppBar, Toolbar, Typography, IconButton, Divider, Button} from '@material-ui/core';
+import HomeIcon from '@material-ui/icons/Home';
 import lz from '@lizhife/lz-jssdk';
-
+import SetsList from './component/SetsList';
 
 
 const  vcon = new VConsole();
@@ -19,6 +20,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      tc_index:0,//0表示在homepage，其它表示对应tc的index
+      sets:JSON.parse(main_list).sets, //
       tc:JSON.parse(datasource),
       origin:"dock",
       status:[],//0 空闲，1正在执行， 2 成功， 3失败 state describe
@@ -228,6 +231,22 @@ class App extends Component {
       apiDialogOpen:false,
     })
   }
+
+  add_new_set = (name) => {
+
+  }
+
+  goto_set = (index)=> {
+    this.setState({
+      tc_index:index,
+    })
+  }
+
+  goto_homepage =()=> {
+    this.setState({
+      tc_index:0,
+    })
+  }
   //----------显示相关-------------
   stat_status(list) {
     var ret ={
@@ -273,33 +292,53 @@ class App extends Component {
     
     return (
       <div className="App">
-       <div>{tc.name}</div> 
-       <div className="meta-info">
-       <div>环境:{this.state.origin}, origin:{this.currentOrigin()}</div>
-       <GlobalInput global_input={tc.global_input}
-                    onGlobalInputChanged={this.onGlobalInputChanged}
-       />
-       <div className="button-flex">
-          <button onClick={this.onRunAll}>全部运行</button>
-          <button onClick={this.onModifyHead}>Edit</button>
-       </div>
-       
-       <div>总共:{statictis.totoal},其中
-       <span className="running">{statictis.running} running</span>,
-       <span className="success">{statictis.success} success</span>,
-       <span className="failed">{statictis.failed} failed</span></div>
-       </div>
-       <Interface interface ={tc.interface}
-          onApiInputChanged={this.onApiInputChanged}
-          onRunApi = {this.onRunApi}
-          onEditApi = {this.onEditApi}
-          status ={this.state.status}
-       />
-       <button onClick={this.onAddApi}>添加接口</button>
-       <EditApiDialog open = {this.state.apiDialogOpen}
-        apiData = {dialogApi}
-        onClose={this.handleApiDialogClose}
-       />
+        <AppBar position="static" color="default">
+        <Toolbar>
+          <IconButton  color="inherit" aria-label="Home" onClick={this.goto_homepage}>
+            <HomeIcon />
+          </IconButton>
+          {this.state.tc_index > 0 && <Typography variant="h6" color="inherit">
+            {tc.name}
+            </Typography>
+          }
+        </Toolbar>
+        </AppBar>
+        <Divider/>
+        {this.state.tc_index>0?<div>
+          <div className="meta-info">
+          <div>环境:{this.state.origin}, origin:{this.currentOrigin()}</div>
+          <GlobalInput global_input={tc.global_input}
+                      onGlobalInputChanged={this.onGlobalInputChanged}
+          />
+          <div className="button-flex">
+            <button onClick={this.onRunAll}>全部运行</button>
+            <button onClick={this.onModifyHead}>Edit</button>
+          </div>
+          
+          <div>总共:{statictis.totoal},其中
+          <span className="running">{statictis.running} running</span>,
+          <span className="success">{statictis.success} success</span>,
+          <span className="failed">{statictis.failed} failed</span></div>
+          </div>
+          <Interface interface ={tc.interface}
+            onApiInputChanged={this.onApiInputChanged}
+            onRunApi = {this.onRunApi}
+            onEditApi = {this.onEditApi}
+            status ={this.state.status}
+          />
+          <button onClick={this.onAddApi}>添加接口</button>
+          <EditApiDialog open = {this.state.apiDialogOpen}
+          apiData = {dialogApi}
+          onClose={this.handleApiDialogClose}
+          />
+        </div> :
+          <SetsList sets={this.state.sets} 
+                    goto_set = {this.goto_set}
+                    add_new_set = {this.add_new_set}
+          />
+
+        }
+      
       </div>
     );
   }
