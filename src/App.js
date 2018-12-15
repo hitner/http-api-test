@@ -7,11 +7,11 @@ import './App.css';
 import VConsole from 'vconsole';
 import Axios from 'axios';
 import * as Utility from './component/utility';
-import {AppBar, Toolbar, Typography, IconButton, Divider, Button} from '@material-ui/core';
+import {AppBar, Toolbar, Typography, IconButton, Divider, Button, Dialog} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import lz from '@lizhife/lz-jssdk';
 import SetsList from './component/SetsList';
-
+import * as reqapi from './component/req_data';
 
 const  vcon = new VConsole();
 vcon.setOption('maxLogNumber', 500);
@@ -39,7 +39,14 @@ class App extends Component {
 
   }
   componentDidMount() {
-    
+    reqapi.get_set_list((ret)=>{
+      if(!ret.rcode) {
+        this.setState({
+          sets:ret.data.sets,
+        });
+      }
+    });
+
   }
 
   updateToken(ret) {
@@ -53,6 +60,12 @@ class App extends Component {
       }
     });
   }
+  
+  confirm_dialog = (title, content, button_list) => {
+
+  }
+
+
   //---------------------------login handle -------------------------//
   loginLizhi(){
       lz.config({
@@ -83,7 +96,12 @@ class App extends Component {
 
   //---------------------------support function -----------------------//
   currentOrigin() {
-    return this.state.tc.origin[this.state.origin];
+    if (this.state.tc.origin) {
+      return this.state.tc.origin[this.state.origin];
+    }
+    else {
+      return 'NULL';
+    }
   }
 
   apiFromIndex(index) {
@@ -233,13 +251,27 @@ class App extends Component {
   }
 
   add_new_set = (name) => {
-
+    reqapi.post_new_set(name, (ret) => {
+      if(!ret.rcode) {
+        var {sets} = this.state;
+        sets.push(ret.data);
+        this.setState({
+          sets:sets,
+        })
+      }
+    });
   }
 
   goto_set = (index)=> {
-    this.setState({
-      tc_index:index,
-    })
+    reqapi.get_set(index, (ret)=> {
+      if(!ret.rcode) {
+        this.setState({
+          tc_index:index,
+          tc:ret.data,
+        })
+      }
+    });
+
   }
 
   goto_homepage =()=> {
@@ -338,7 +370,9 @@ class App extends Component {
           />
 
         }
-      
+        <Dialog>
+          
+        </Dialog>
       </div>
     );
   }
