@@ -56,3 +56,7 @@ export function post_new_set(name, cb) {
         }
     })
 }
+
+export function delete_set(index, callback) {
+    console.log(`delete set ${index}`);
+}

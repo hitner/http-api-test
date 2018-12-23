@@ -1,15 +1,20 @@
 
 import React, {Component} from 'react';
-import { Dialog } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogActions,Button } from '@material-ui/core';
 
 var only_modal = null;
+
+
+
 
 class StandardModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            type:2 ,//0 none, 1 toast, 2 confirm-dialog, 3 dialog
-            show:1,
+            type:'' ,// [none], K-toast,  K-confirm-dialog,  K-dialog
+            show:false,
+            content:'',
+            confirmCallback:null,
         }
     }
 
@@ -17,15 +22,41 @@ class StandardModal extends Component {
         only_modal = this;
     }
 
+    onClickCancelButton = ()=> {
+        this.setState({
+            type:'',
+            show:false,
+        })
+    }
+
+    onClickConfirmButton = ()=> {
+        this.setState({
+            type:'',
+            show:false, 
+        });
+        if (this.state.confirmCallback) {
+            this.state.confirmCallback();
+        }
+    }
     render () {
         var componet = null;
         switch(this.state.type) {
-            case 1:
+            case 'K-toast':
             break;
-            case 2:
-            componet = (<Dialog open={this.state.show}>hellow</Dialog>)
+            case 'K-confirm-dialog':
+            componet = (<Dialog open={this.state.show}><DialogContent>
+                    <DialogContentText>{this.state.content}</DialogContentText>
+                    <DialogActions>
+            <Button onClick={this.onClickConfirmButton} color="primary">
+              确认
+            </Button>
+            <Button onClick={this.onClickCancelButton} color="primary">
+              取消
+            </Button>
+          </DialogActions>
+                </DialogContent></Dialog>)
             break;
-            case 3:
+            case 'K-dialog':
             break;
             default :
             break;
@@ -41,9 +72,11 @@ export function SMToast(content, showtime = 2) {
 }
 
 
-export function SMAlert(content, callback) {
+export function SMConfirmDialog(content, callback) {
     only_modal.setState({
-        type:2,
+        show:true,
+        type:'K-confirm-dialog',
         content:content,
+        confirmCallback:callback,
     });
 }

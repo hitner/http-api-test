@@ -9,7 +9,7 @@ import Axios from 'axios';
 import * as Utility from './component/utility';
 import {AppBar, Toolbar, Typography, IconButton, Divider, Button, Dialog} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
-import lz from '@lizhife/lz-jssdk';
+//import lz from '@lizhife/lz-jssdk';
 import SetsList from './component/SetsList';
 import * as reqapi from './component/req_data';
 
@@ -61,14 +61,12 @@ class App extends Component {
     });
   }
   
-  confirm_dialog = (title, content, button_list) => {
-
-  }
+ 
 
 
   //---------------------------login handle -------------------------//
   loginLizhi(){
-      lz.config({
+      /*lz.config({
         debug:false,
         url:process.env.NODE_EVN === 'development'?'':"//h5security.lizhi.fm/jsBridgeConfig/get",
         apiList:[
@@ -91,7 +89,7 @@ class App extends Component {
             }
           });
       });
-    
+    */
   }
 
   //---------------------------support function -----------------------//
@@ -262,6 +260,14 @@ class App extends Component {
     });
   }
 
+  delete_set = (index) => {
+    reqapi.delete_set(index, (ret) => {
+      if(!ret.rcode) {
+        
+      }
+    });
+  }
+
   goto_set = (index)=> {
     reqapi.get_set(index, (ret)=> {
       if(!ret.rcode) {
@@ -367,6 +373,7 @@ class App extends Component {
           <SetsList sets={this.state.sets} 
                     goto_set = {this.goto_set}
                     add_new_set = {this.add_new_set}
+                    delete_set = {this.delete_set}
           />
 
         }

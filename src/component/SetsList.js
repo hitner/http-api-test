@@ -1,4 +1,5 @@
 import React ,{Component} from 'react';
+import {SMConfirmDialog} from './StandardModal';
 
 import './SetsList.css';
 import { List, ListItem, ListItemText ,ListItemSecondaryAction, IconButton, Button, Dialog,
@@ -45,6 +46,11 @@ class SetsList extends Component {
         }
     }
 
+    on_click_delete_button = (index)=> {
+        SMConfirmDialog(`确定删除测试集"${index}"吗？`,()=>{
+            this.props.delete_set(index);
+        });
+    }
 
     render() {
         const list_data = this.props.sets.map((ele)=> {
@@ -54,7 +60,7 @@ class SetsList extends Component {
                 <ListItemText inset={true} primary={ele.size}></ListItemText>
                 <ListItemText inset={true} primary={ele.mtime}></ListItemText>
                 <ListItemSecondaryAction>
-                      <IconButton aria-label="Delete">
+                      <IconButton aria-label="Delete" onClick={()=>{this.on_click_delete_button(ele.index);}}>
                         <DeleteIcon />
                       </IconButton>
                 </ListItemSecondaryAction>
