@@ -263,7 +263,16 @@ class App extends Component {
   delete_set = (index) => {
     reqapi.delete_set(index, (ret) => {
       if(!ret.rcode) {
-        
+        var {sets} = this.state;
+        for (var i = 0; i< sets.length; ++i) {
+          if (sets[i].index === index) {
+            sets.splice(i,1);
+            this.setState({
+              sets:sets,
+            })
+            return;
+          }
+        } 
       }
     });
   }
@@ -285,6 +294,51 @@ class App extends Component {
       tc_index:0,
     })
   }
+  //接口集的新增、修改、删除
+  onSaveApi = (data)=> {
+    const {apiDialogIndex} = this.state;
+    if (apiDialogIndex >= 0) {
+      //修改
+      reqapi.put_api(this.state.tc_index, apiDialogIndex, data , (dt)=> {
+        this.goto_set(this.state.tc_index);
+      });
+    }
+    else if (apiDialogIndex === -1) {
+      reqapi.post_api(this.state.tc_index, data, (dt)=> {
+        if(dt.rcode === 0) {
+          console.log(`post api for set ${this.state.tc_index}`);
+          this.goto_set(this.state.tc_index);
+        }
+      });
+    }
+    else {
+      reqapi.patch_set(this.state.tc_index,data, (dt)=> {
+        if(dt.rcode === 0) {
+          console.log(`patch api for set ${this.state.tc_index}`);
+          this.goto_set(this.state.tc_index);
+        }
+      });
+    }
+    this.setState({
+      apiDialogOpen :false,
+    })
+    
+  }
+
+  onDeleteApi = () => {
+    if (this.state.apiDialogIndex >= 0 ) {
+      reqapi.delete_api(this.state.tc_index, this.state.apiDialogIndex, (data) => {
+        console.log(`patch api for set ${this.state.tc_index}`);
+        this.goto_set(this.state.tc_index);
+      });
+    }
+    this.setState({
+      apiDialogOpen :false,
+    })
+  }
+
+
+
   //----------显示相关-------------
   stat_status(list) {
     var ret ={
@@ -319,7 +373,7 @@ class App extends Component {
       if (this.state.apiDialogIndex >= 0) {
         dialogApi = tc.interface[this.state.apiDialogIndex];
       }
-      else if (this.state.apiDialogIndex == -2) {
+      else if (this.state.apiDialogIndex === -2) {
         dialogApi = {
           name:tc.name,
           origin:tc.origin,
@@ -366,8 +420,10 @@ class App extends Component {
           />
           <button onClick={this.onAddApi}>添加接口</button>
           <EditApiDialog open = {this.state.apiDialogOpen}
-          apiData = {dialogApi}
-          onClose={this.handleApiDialogClose}
+            apiData = {dialogApi}
+            onClose={this.handleApiDialogClose}
+            onDelete={this.onDeleteApi}
+            onSave={this.onSaveApi}
           />
         </div> :
           <SetsList sets={this.state.sets} 
@@ -377,9 +433,7 @@ class App extends Component {
           />
 
         }
-        <Dialog>
           
-        </Dialog>
       </div>
     );
   }

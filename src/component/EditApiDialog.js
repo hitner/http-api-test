@@ -25,12 +25,6 @@ function stringifyApi(apiData) {
         }
     });
     return dst;
-    var api = JSON.parse(JSON.stringify(apiData));
-
-    api.input = JSON.stringify(api.input);
-    api.application_json = JSON.stringify(api.application_json);
-    api.headers = JSON.stringify(api.headers)
-    return api
 }
 
 class EditApiDialog extends Component {
@@ -60,8 +54,17 @@ class EditApiDialog extends Component {
         return true;
     }
 
-    onSave = ()=> {
-
+    onClickSave = ()=> {
+        var dst = {}
+        Object.keys(this.state.api).forEach((ele) => {
+            try {
+                dst[ele] = JSON.parse(this.state.api[ele]);
+            } catch (error) {
+                dst[ele] = this.state.api[ele];
+            }
+        });
+   
+       this.props.onSave(dst);
     }
 
     inputChanged = (ele) => {
@@ -73,7 +76,7 @@ class EditApiDialog extends Component {
     }
 
     render () {
-        const {apiData, onClose,onDelete, ...other} = this.props;
+        const {apiData, onClose,onDelete,onSave, ...other} = this.props;
         const {api} = this.state;
         var inputs = [];
         Object.keys(api).forEach(ele => {
@@ -93,7 +96,7 @@ class EditApiDialog extends Component {
             </DialogContent>
             <DialogActions>
                 <Button className="delete-btn" variant="outlined" color='secondary' onClick={onDelete}>删除</Button>
-                <Button variant="outlined" color="primary" onClick={this.onSave} >保存</Button>
+                <Button variant="outlined" color="primary" onClick={this.onClickSave} >保存</Button>
                 <Button variant="outlined" onClick={onClose}>Cancel </Button>
             </DialogActions>
         </Dialog>)
