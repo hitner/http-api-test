@@ -1,6 +1,5 @@
-import axios from 'axios';
 
-const Host = 'http://127.0.0.1:8800/testsets/';
+const Host = '/testsets/';
 
 
 export function get_set_list(cb) {

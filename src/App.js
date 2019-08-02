@@ -5,11 +5,9 @@ import EditApiDialog from './component/EditApiDialog';
 import datasource, {main_list} from './test_data';
 import './App.css';
 import VConsole from 'vconsole';
-import Axios from 'axios';
 import * as Utility from './component/utility';
-import {AppBar, Toolbar, Typography, IconButton, Divider, Button, Dialog} from '@material-ui/core';
+import {AppBar, Toolbar, Typography, IconButton, Divider, } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
-//import lz from '@lizhife/lz-jssdk';
 import SetsList from './component/SetsList';
 import * as reqapi from './component/req_data';
 
@@ -34,8 +32,6 @@ class App extends Component {
     this.onRunAll = this.onRunAll.bind(this);
     this.onEditApi = this.onEditApi.bind(this);
     this.onAddApi = this.onAddApi.bind(this);
-    
-    this.loginLizhi();
 
   }
   componentDidMount() {
@@ -61,36 +57,6 @@ class App extends Component {
     });
   }
   
- 
-
-
-  //---------------------------login handle -------------------------//
-  loginLizhi(){
-      /*lz.config({
-        debug:false,
-        url:process.env.NODE_EVN === 'development'?'':"//h5security.lizhi.fm/jsBridgeConfig/get",
-        apiList:[
-          'getToken',
-          'getAppInfo',
-        ],
-        eventList:[
-          'verifySignFinish',
-          'user:login',
-        ]
-      });
-    
-      lz.ready(()=>{
-        console.log('lz-jssdk ready now');
-        lz.getToken({needRefresh:false}
-          ).then((ret)=>{
-            console.log('lz jssdk:token:', ret);
-            if (ret.status === 'success'){
-              this.updateToken(ret.token);
-            }
-          });
-      });
-    */
-  }
 
   //---------------------------support function -----------------------//
   currentOrigin() {
@@ -143,7 +109,7 @@ class App extends Component {
     return result;
   }
 
-
+//请求发起
   requestApi(api, index) {
     var {status} = this.state;
     status[index] = {
@@ -155,12 +121,18 @@ class App extends Component {
     });
 
     var final_app_json = this.finalApplicationJson(api);
-    Axios({
+
+    let fetchInit = {
       method:api.method,
-      url:this.wholeUrl(api),
-      data:Utility.isEmptyObject(final_app_json)? null : final_app_json,
-    }).then((response)=>{
-      var RET = response.data;
+    }
+    if ( !Utility.isEmptyObject(final_app_json)) {
+      fetchInit.headers = {
+        "Content-Type": "application/json",
+      };
+      fetchInit.body = JSON.stringify(final_app_json);
+    }
+    fetch(this.wholeUrl(api),fetchInit).then(response => response.json())
+    .then(RET=> {
       var selfAssert = eval(api.assert);
       console.log(`api index ${index} ,assert result:${selfAssert}`);
       var newStatus = this.state.status;
@@ -171,7 +143,8 @@ class App extends Component {
       this.setState({
         status:newStatus,
       });
-    }).catch((error)=>{
+    })
+    .catch((error)=>{
       console.log(error);
       var newStatus = this.state.status;
       var errorDict = error;
@@ -188,8 +161,7 @@ class App extends Component {
       this.setState({
         status:newStatus,
       });
-    }
-    );
+    });
   }
 
   //----------------------------event response -----------------------//
