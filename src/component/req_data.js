@@ -1,6 +1,6 @@
 
-const Host = '/testsets/';
-
+//const Host = 'http://139.180.139.19:8999/testsets/';
+const Host = '/testsets/'
 
 export function get_set_list(cb) {
     fetch(Host).then((resp)=>{

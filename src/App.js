@@ -102,6 +102,9 @@ class App extends Component {
   }
 
   finalApplicationJson(api) {
+    if (typeof(api.application_json) == 'object') {
+      api.application_json = JSON.stringify(api.application_json);
+    }
     let newString = this.replaceVarInString(api, api.application_json);
     let result = {};
     if (newString) {
