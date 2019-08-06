@@ -102,10 +102,11 @@ class App extends Component {
   }
 
   finalApplicationJson(api) {
-    var result = {}
-    Object.keys(api.application_json).forEach((key)=>{
-      result[key] = this.replaceVarInString(api, api.application_json[key])
-    });
+    let newString = this.replaceVarInString(api, api.application_json);
+    let result = {};
+    if (newString) {
+      result = JSON.parse(newString);
+    }
     return result;
   }
 

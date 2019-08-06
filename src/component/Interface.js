@@ -64,7 +64,7 @@ class ApiDetail extends Component {
 class Interface extends Component {
     render () {
         var apis = this.props.interface.map((ele, index, arr) => {
-            return (<ApiDetail key={ele.name} api={ele} 
+            return (<ApiDetail key={ele.name+index} api={ele} 
                 index={index} 
                 onApiInputChanged={this.props.onApiInputChanged}
                 onRunApi={this.props.onRunApi}

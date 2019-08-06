@@ -55,16 +55,16 @@ class EditApiDialog extends Component {
     }
 
     onClickSave = ()=> {
-        var dst = {}
-        Object.keys(this.state.api).forEach((ele) => {
-            try {
-                dst[ele] = JSON.parse(this.state.api[ele]);
-            } catch (error) {
-                dst[ele] = this.state.api[ele];
-            }
-        });
-   
-       this.props.onSave(dst);
+        var dist = {}
+        Object.assign(dist,this.state.api);
+        try {
+            dist['input'] = JSON.parse(dist.input);
+            } 
+        catch (error) {
+                dist['input'] = {}
+        };
+        
+       this.props.onSave(dist);
     }
 
     inputChanged = (ele) => {
