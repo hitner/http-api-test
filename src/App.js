@@ -339,6 +339,11 @@ class App extends Component {
     return ret;
   }
 
+  onChoosedOriginChanged(value) {
+    this.setState({
+      origin:value, 
+    })
+  }
 
   render() {
     const {tc} = this.state;
@@ -374,6 +379,9 @@ class App extends Component {
         <Divider/>
         {this.state.tc_index>0?<div>
           <div className="meta-info">
+          <input type="text" value = {this.state.choosedOrigin}
+                     onChange={(e)=>this.onChoosedOriginChanged(e.target.value)}/>
+
           <div>环境:{this.state.origin}, origin:{this.currentOrigin()}</div>
           <GlobalInput global_input={tc.global_input}
                       onGlobalInputChanged={this.onGlobalInputChanged}
